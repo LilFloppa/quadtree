@@ -8,17 +8,14 @@ namespace QuadTree
         public int X { get; set; }
         public int Y { get; set; }
 
-        public Color Color { get; set; }
-
-        public Circle(int radius, int x, int y, Color color)
+        public Circle(int radius, int x, int y)
         {
             Radius = radius;
             X = x;
             Y = y;
-            Color = color;
         }
 
-        public bool Intersect(Circle other)
+        public bool Intersects(Circle other)
         {
             int distance = (other.X - X) * (other.X - X) + (other.Y - Y) * (other.Y - Y);
             return distance < (Radius + other.Radius) * (Radius + other.Radius);
@@ -43,6 +40,13 @@ namespace QuadTree
                 ContainsPoint(r.Bottom, r.Left) &&
                 ContainsPoint(r.Bottom, r.Left);
         }
+
+        public bool IntersectsRectangle(Rectangle r)
+        {
+            // TODO: implement
+            // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection#:~:text=There%20are%20only%20two%20cases%20when%20the%20circle%20intersects%20with%20the%20rectangle%3A
+            throw new NotImplementedException();
+        }
     }
 
     public class Domain
@@ -54,8 +58,6 @@ namespace QuadTree
 
         Random random = new();
 
-        int generateCircleAttempts = 1;
-
         public Domain(int width, int height)
         {
             Width = width;
@@ -63,61 +65,17 @@ namespace QuadTree
             QuadTree = new(new Rectangle { Height = height, Width = width, X = 0, Y = 0 });
         }
 
-        public Circle? TryAddCircle(Color color)
+        public Circle AddCircle(int x, int y)
         {
-            int attempts = 0;
-            while (attempts < generateCircleAttempts)
-            {
-                int radius = random.Next(5, 70);
-                int x = random.Next(radius, Width - radius);
-                int y = random.Next(radius, Height - radius);
-                Circle circle = new Circle(radius, x, y, color);
-                bool valid = true;
-                foreach (var c in Circles)
-                    if (c.Intersect(circle))
-                        valid = false;
+            int radius = random.Next(10, 30);
+            Circle circle = new Circle(radius, x, y);
 
-                if (valid)
-                {
-                    Circles.Add(circle);
-                    QuadTree.AddCircle(circle);
-                    return circle;
-                }
-            }
-
-            return null;
+            Circles.Add(circle);
+            QuadTree.AddCircle(circle);
+            return circle;
         }
 
-        public Circle? TryAddCircle(int x, int y, Color color)
-        {
-            int attempts = 0;
-            while (attempts < generateCircleAttempts)
-            {
-                int radius = random.Next(10, 30);
-                Circle circle = new Circle(radius, x, y, color);
-                bool valid = true;
-                foreach (var c in Circles)
-                    if (c.Intersect(circle))
-                        valid = false;
-
-                if (valid)
-                {
-                    Circles.Add(circle);
-                    QuadTree.AddCircle(circle);
-                    return circle;
-                }
-            }
-
-            return null;
-        }
-
-        public void Resize(int width, int height)
-        {
-            Width = width;
-            Height = height;
-        }
-
-        public Circle? Find(int x, int y)
+        public Circle? FindInList(int x, int y)
         {
             foreach (var circle in Circles)
                 if (circle.ContainsPoint(x, y))

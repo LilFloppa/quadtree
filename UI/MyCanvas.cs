@@ -8,18 +8,18 @@ namespace UI
 {
     public class MyCanvas : Canvas
     {
-        Domain domain = null;
+        Domain? domain = null;
 
-        System.Drawing.Color circleColor = System.Drawing.Color.FromArgb(255, 42, 193, 160);
-
+        // Circle colors
         SolidColorBrush circleBrush = new SolidColorBrush(Color.FromArgb(255, 42, 193, 160));
         SolidColorBrush selectedCircleBrush = new SolidColorBrush(Color.FromArgb(255, 255, 255, 100));
+        Pen circlePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 255, 193, 160)), 2);
+        // QuadNode colors
         SolidColorBrush quadNodeBrush = new SolidColorBrush(Color.FromArgb(255, 132, 155, 153));
         SolidColorBrush selectedQuadNodeBrush = new SolidColorBrush(Color.FromArgb(255, 237, 85, 235));
-        Pen quadNodePen = null;
-        Pen selectedQuadNodePen = null;
+        Pen quadNodePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 132, 155, 153)), 2);
+        Pen selectedQuadNodePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 237, 85, 235)), 2);
 
-        Circle? selected = null;
         (QuadNode node, Circle circle)? found = null;
 
         public MyCanvas()
@@ -32,31 +32,20 @@ namespace UI
 
         public void SetDomain(Domain domain) => this.domain = domain;
 
-        public void TryAddRandomCircle()
-        {
-            var circle = domain.TryAddCircle(circleColor);
-            InvalidateVisual();
-        }
-
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            var mousePos = e.GetPosition(this);
-            //Circle? circle = domain.Find((int)mousePos.X, (int)mousePos.Y);
-
-            //if (circle != selected)
-            //{
-            //    selected = circle;
-            //    InvalidateVisual();
-            //}
-
-            (QuadNode, Circle)? newFound = domain.FindInQuadTree((int)mousePos.X, (int)mousePos.Y);
-            if (newFound != found)
+            if (domain != null)
             {
-                newFound = domain.FindInQuadTree((int)mousePos.X, (int)mousePos.Y);
-                found = newFound;
-                InvalidateVisual();
+                var mousePos = e.GetPosition(this);
+                (QuadNode, Circle)? newFound = domain.FindInQuadTree((int)mousePos.X, (int)mousePos.Y);
+                if (newFound != found)
+                {
+                    newFound = domain.FindInQuadTree((int)mousePos.X, (int)mousePos.Y);
+                    found = newFound;
+                    InvalidateVisual();
+                }
             }
         }
 
@@ -67,7 +56,7 @@ namespace UI
             if (e.RightButton == MouseButtonState.Pressed)
             {
                 var mousePos = e.GetPosition(this);
-                domain.TryAddCircle((int)mousePos.X, (int)mousePos.Y, circleColor);
+                domain?.AddCircle((int)mousePos.X, (int)mousePos.Y);
                 InvalidateVisual();
             }
         }
@@ -79,20 +68,33 @@ namespace UI
             if (domain == null)
                 return;
 
-            foreach (var circle in domain.Circles)
-                dc.DrawEllipse(circleBrush, null, new System.Windows.Point(circle.X, circle.Y), circle.Radius, circle.Radius);
-
+            DrawCircles(dc);
             DrawQuadTree(dc, domain.QuadTree.Root);
+            DrawFoundCircleAndNode(dc);
+        }
 
-            if (selected != null)
-                dc.DrawEllipse(selectedCircleBrush, null, new System.Windows.Point(selected.X, selected.Y), selected.Radius, selected.Radius);
+        private void DrawCircles(DrawingContext dc)
+        {
+            if (domain != null)
+                foreach (var circle in domain.Circles)
+                    dc.DrawEllipse(circleBrush, circlePen, new System.Windows.Point(circle.X, circle.Y), circle.Radius, circle.Radius);
+        }
 
+        private void DrawQuadTree(DrawingContext dc, QuadNode node)
+        {
+            dc.DrawRectangle(null, quadNodePen, new System.Windows.Rect(node.Area.X, node.Area.Y, node.Area.Width, node.Area.Height));
+            foreach (var child in node.Children)
+                DrawQuadTree(dc, child);
+        }
+
+        private void DrawFoundCircleAndNode(DrawingContext dc)
+        {
             if (found != null)
             {
                 dc.DrawEllipse(selectedCircleBrush, null, new System.Windows.Point(
-                    found.Value.circle.X, 
-                    found.Value.circle.Y), 
-                    found.Value.circle.Radius, 
+                    found.Value.circle.X,
+                    found.Value.circle.Y),
+                    found.Value.circle.Radius,
                     found.Value.circle.Radius);
 
                 dc.DrawRectangle(null, selectedQuadNodePen, new System.Windows.Rect(
@@ -101,14 +103,6 @@ namespace UI
                     found.Value.node.Area.Width,
                     found.Value.node.Area.Height));
             }
-        }
-
-        private void DrawQuadTree(DrawingContext dc, QuadNode node)
-        {
-            dc.DrawRectangle(null, quadNodePen, new System.Windows.Rect(node.Area.X, node.Area.Y, node.Area.Width, node.Area.Height));
-
-            foreach (var child in node.Children)
-                DrawQuadTree(dc, child);
         }
     }
 }
