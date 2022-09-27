@@ -14,21 +14,14 @@ namespace UI
         SolidColorBrush circleBrush = new SolidColorBrush(Color.FromArgb(255, 42, 193, 160));
         SolidColorBrush selectedCircleBrush = new SolidColorBrush(Color.FromArgb(255, 255, 255, 100));
         Pen circlePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 255, 193, 160)), 2);
+
         // QuadNode colors
-        SolidColorBrush quadNodeBrush = new SolidColorBrush(Color.FromArgb(255, 132, 155, 153));
-        SolidColorBrush selectedQuadNodeBrush = new SolidColorBrush(Color.FromArgb(255, 237, 85, 235));
         Pen quadNodePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 132, 155, 153)), 2);
         Pen selectedQuadNodePen = new Pen(new SolidColorBrush(Color.FromArgb(255, 237, 85, 235)), 2);
 
         (QuadNode node, Circle circle)? found = null;
 
-        public MyCanvas()
-        {
-            Background = new SolidColorBrush(Color.FromArgb(255, 34, 51, 51));
-
-            quadNodePen = new Pen(quadNodeBrush, 2);
-            selectedQuadNodePen = new Pen(selectedQuadNodeBrush, 2);
-        }
+        public MyCanvas() => Background = new SolidColorBrush(Color.FromArgb(255, 34, 51, 51));
 
         public void SetDomain(Domain domain) => this.domain = domain;
 
