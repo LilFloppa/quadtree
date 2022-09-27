@@ -43,9 +43,35 @@ namespace QuadTree
 
         public bool IntersectsRectangle(Rectangle r)
         {
-            // TODO: implement
             // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection#:~:text=There%20are%20only%20two%20cases%20when%20the%20circle%20intersects%20with%20the%20rectangle%3A
-            throw new NotImplementedException();
+
+            return
+                ContainsRectangle(r)
+                || IntersectsLine(r.Left, r.Top, r.Right, r.Top)
+                || IntersectsLine(r.Left, r.Top, r.Left, r.Bottom)
+                || IntersectsLine(r.Right, r.Top, r.Right, r.Bottom)
+                || IntersectsLine(r.Left, r.Bottom, r.Right, r.Bottom);
+        }
+
+        public bool IntersectsLine(double Ax, double Ay, double Bx, double By)
+        {
+            if (ContainsPoint((int)Ax, (int)Ay) || ContainsPoint((int)Bx, (int)By))
+                return true;
+
+            double Cx = (double)X;
+            double Cy = (double)Y;
+            double t = ((Cx - Ax) * (Bx - Ax) + (Cy - Ay) * (By - Ay)) / ((Bx - Ax) * (Bx - Ax) + (By - Ay) * (By - Ay));
+
+            if (t >= 0 && t <= 1)
+            {
+                double Dx = Ax + t * (Bx - Ax);
+                double Dy = Ay + t * (By - Ay);
+
+                if ((Dx - Cx) * (Dx - Cx) + (Dy - Cy) * (Dy - Cy) <= Radius * Radius)
+                    return true;
+            }
+
+            return false;
         }
     }
 
