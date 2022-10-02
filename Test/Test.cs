@@ -19,8 +19,6 @@ namespace Test
                     result.Add(circle);
             }
             stopwatch.Stop();
-            Console.WriteLine($"Point Count: {pointCount}, Linear Search Time: {stopwatch.Elapsed.TotalMilliseconds}ms");
-
             return stopwatch.Elapsed.TotalMilliseconds;
         }
 
@@ -38,8 +36,6 @@ namespace Test
                     result.Add(circle.Value.Item2);
             }
             stopwatch.Stop();
-            Console.WriteLine($"Point Count: {pointCount}, Quad Tree Search Time: {stopwatch.Elapsed.TotalMilliseconds}ms");
-
             return stopwatch.Elapsed.TotalMilliseconds;
         }
 
