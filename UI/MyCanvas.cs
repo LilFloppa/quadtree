@@ -49,7 +49,7 @@ namespace UI
             if (e.RightButton == MouseButtonState.Pressed)
             {
                 var mousePos = e.GetPosition(this);
-                domain?.AddCircle((int)mousePos.X, (int)mousePos.Y);
+                domain?.AddCircleWithRandomRadius((int)mousePos.X, (int)mousePos.Y);
                 InvalidateVisual();
             }
         }

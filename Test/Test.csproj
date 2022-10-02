@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
+  </ItemGroup>
+
 </Project>

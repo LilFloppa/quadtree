@@ -23,8 +23,14 @@ namespace QuadTree
 
         public bool ContainsPoint(int x, int y)
         {
-            int distance = (X - x) * (X - x) + (Y - y) * (Y - y);
-            return distance < Radius * Radius;
+            UInt64 uint_x = (UInt64)x;
+            UInt64 uint_y = (UInt64)y;
+
+            UInt64 uint_X = (UInt64)X;
+            UInt64 uint_Y = (UInt64)Y;
+
+            UInt64 distance = (uint_X - uint_x) * (uint_X - uint_x) + (uint_Y - uint_y) * (uint_Y - uint_y);
+            return distance < (UInt64)Radius * (UInt64)Radius;
         }
 
         public bool CenterInsideRectangle(Rectangle r)
@@ -62,7 +68,10 @@ namespace QuadTree
         public bool IntersectsLine(double Ax, double Ay, double Bx, double By)
         {
             if (ContainsPoint((int)Ax, (int)Ay) || ContainsPoint((int)Bx, (int)By))
+            {
+                bool a = ContainsPoint((int)Ax, (int)Ay) || ContainsPoint((int)Bx, (int)By);
                 return true;
+            }
 
             double Cx = (double)X;
             double Cy = (double)Y;
@@ -97,11 +106,18 @@ namespace QuadTree
             QuadTree = new(new Rectangle { Height = height, Width = width, X = 0, Y = 0 });
         }
 
-        public Circle AddCircle(int x, int y)
+        public Circle AddCircleWithRandomRadius(int x, int y)
         {
             int radius = random.Next(10, 30);
             Circle circle = new Circle(radius, x, y);
 
+            Circles.Add(circle);
+            QuadTree.AddCircle(circle);
+            return circle;
+        }
+
+        public Circle AddCircle(Circle circle)
+        {
             Circles.Add(circle);
             QuadTree.AddCircle(circle);
             return circle;
