@@ -1,58 +1,30 @@
 ﻿using QuadTree;
-using System.Diagnostics;
+using System.Text.Json;
+using Test;
 
-int radius = 1;
 int width = 100000;
 int height = 100000;
-int circlesCount = 100;
+string filepath = "C:/repos/circles.json";
 
-List<Circle> GenerateNonOverlappingCircles(int count, int width, int height)
+
+List<Circle> circles = null;
+
+if (!File.Exists(filepath))
 {
-    List<Circle> result = new List<Circle>();
-    int maxAttempts = 50;
-
-    for (int i = 0; i < count; i++)
-    {
-        int attempt = 0;
-        while (attempt < maxAttempts)
-        {
-            int x = Random.Shared.Next(0, width);
-            int y = Random.Shared.Next(0, height);
-            Circle c = new(radius, x, y);
-
-            bool valid = true;
-            foreach (var circle in result)
-                if (c.Intersects(circle))
-                    valid = false;
-
-            if (valid)
-            {
-                result.Add(c);
-                break;
-            }
-            attempt++;
-        }
-    }
-
-    return result;
+    circles = Utils.GenerateNonOverlappingCircles(20000, 80, width, height);
+    string json = JsonSerializer.Serialize(circles);
+    File.WriteAllText(filepath, json);
+}
+else
+{
+    circles = Utils.CirclesFromJsonFile(filepath);
 }
 
-
-
-List<Circle> circles = GenerateNonOverlappingCircles(circlesCount, width, height);
+Console.WriteLine($"Circles Count: {circles.Count}");
 Domain domain = new Domain(width, height);
 
 foreach (var circle in circles)
     domain.AddCircle(circle);
 
-Stopwatch stopwatch = new Stopwatch();
-stopwatch.Start();
-domain.FindInList(100, 100);
-stopwatch.Stop();
-Console.WriteLine($"Linear Search Time: {stopwatch.Elapsed.TotalMilliseconds}ms");
-
-stopwatch.Reset();
-stopwatch.Start();
-domain.FindInQuadTree(100, 100);
-stopwatch.Stop();
-Console.WriteLine($"QuadTree Search Time: {stopwatch.Elapsed.TotalMilliseconds}ms");
+double ms = TestCases.TestLinearSearch(domain, 100);
+ms = TestCases.TestQuadTreeSearch(domain, 100);
