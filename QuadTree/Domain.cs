@@ -99,11 +99,11 @@ namespace QuadTree
 
         Random random = new();
 
-        public Domain(int width, int height)
+        public Domain(int K, int width, int height)
         {
             Width = width;
             Height = height;
-            QuadTree = new(new Rectangle { Height = height, Width = width, X = 0, Y = 0 });
+            QuadTree = new(K, new Rectangle { Height = height, Width = width, X = 0, Y = 0 });
         }
 
         public Circle AddCircleWithRandomRadius(int x, int y)
@@ -116,9 +116,14 @@ namespace QuadTree
             return circle;
         }
 
-        public Circle AddCircle(Circle circle)
+        public Circle AddCircleToList(Circle circle)
         {
             Circles.Add(circle);
+            return circle;
+        }
+
+        public Circle AddCircleToQuadTree(Circle circle)
+        {
             QuadTree.AddCircle(circle);
             return circle;
         }

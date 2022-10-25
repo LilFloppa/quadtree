@@ -74,10 +74,13 @@ namespace Test
             List<Circle> circles = Utils.GenerateNonOverlappingCircles(circleCount, radius, width, height);
             Console.WriteLine($"Circles Count: {circles.Count}");
 
-            Domain domain = new Domain(width, height);
+            Domain domain = new Domain((int)Math.Sqrt(circles.Count), width, height);
 
             foreach (var circle in circles)
-                domain.AddCircle(circle);
+            {
+                domain.AddCircleToList(circle);
+                domain.AddCircleToQuadTree(circle);
+            }
 
             var points = Utils.GeneratePoints(width, height, pointCount);
             List<Circle> quad = QuadTreeSearchCircles(domain, points);

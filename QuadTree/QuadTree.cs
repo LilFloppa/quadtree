@@ -4,16 +4,21 @@ namespace QuadTree
 {
     public class QuadNode
     {
+        public int K { get; set; }
         public Rectangle Area { get; set; }
         public List<Circle> Circles { get; set; } = new();
         public List<QuadNode> Children { get; set; } = new();
         public bool IsLeaf => Children.Count == 0;
 
-        public QuadNode(Rectangle area) => Area = area;
+        public QuadNode(int K, Rectangle area)
+        {
+            this.K = K;
+            Area = area;
+        }
 
         public void AddCircle(Circle circle)
         {
-            if (Circles.Count < QuadTree.K && IsLeaf)
+            if (Circles.Count < K && IsLeaf)
             {
                 Circles.Add(circle);
                 return;
@@ -46,32 +51,12 @@ namespace QuadTree
             var trArea = new Rectangle(Area.X + childWidth, Area.Y, childWidth, childHeight);
             var brArea = new Rectangle(Area.X + childWidth, Area.Y + childHeight, childWidth, childHeight);
 
-            Children.Add(new QuadNode(tlArea));
-            Children.Add(new QuadNode(blArea));
-            Children.Add(new QuadNode(trArea));
-            Children.Add(new QuadNode(brArea));
+            Children.Add(new QuadNode(K, tlArea));
+            Children.Add(new QuadNode(K, blArea));
+            Children.Add(new QuadNode(K, trArea));
+            Children.Add(new QuadNode(K, brArea));
         }
 
-        //                 AMOGUS
-        // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣤⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⠟⠉⠉⠉⠉⠉⠉⠉⠙⠻⢶⣄⠀⠀⠀⠀⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣷⡀⠀⠀⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⡟⠀⣠⣶⠛⠛⠛⠛⠛⠛⠳⣦⡀⠀⠘⣿⡄⠀⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠁⠀⢹⣿⣦⣀⣀⣀⣀⣀⣠⣼⡇⠀⠀⠸⣷⠀⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⡏⠀⠀⠀⠉⠛⠿⠿⠿⠿⠛⠋⠁⠀⠀⠀⠀⣿⡄
-        //       ⠀⢠⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡇⠀
-        //       ⠀⣸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀
-        //⠀⠀⠀⠀⠀⠀⠀⠀⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣧⠀
-        //⠀⠀⠀⠀⠀⠀⠀⢸⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⠀
-        //⠀⠀⠀⠀⠀⠀⠀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀
-        //⠀⠀⠀⠀⠀⠀⠀⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀
-        //⠀⠀⠀⠀⠀⠀⢰⣿⠀⠀⠀⠀⣠⡶⠶⠿⠿⠿⠿⢷⣦⠀⠀⠀⠀⠀⠀⠀⣿⠀
-        //⠀⠀⣀⣀⣀⠀⣸⡇⠀⠀⠀⠀⣿⡀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⣿⠀
-        //⣠⡿⠛⠛⠛⠛⠻⠀⠀⠀⠀⠀⢸⣇⠀⠀⠀⠀⠀⠀⣿⠇⠀⠀⠀⠀⠀⠀⣿⠀
-        //⢻⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⡟⠀⠀⢀⣤⣤⣴⣿⠀⠀⠀⠀⠀⠀⠀⣿⠀
-        //⠈⠙⢷⣶⣦⣤⣤⣤⣴⣶⣾⠿⠛⠁⢀⣶⡟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡟⠀
-        //          ⠀⠀⠀⠀⠈⣿⣆⡀⠀⠀⠀⠀⠀⠀⢀⣠⣴⡾⠃⠀
-        //          ⠀⠀⠀⠀⠀⠈⠛⠻⢿⣿⣾⣿⡿⠿⠟⠋⠁⠀⠀⠀
         private void DistributeCirclesAmongChildren()
         {
             foreach (var circle in Circles)
@@ -83,12 +68,14 @@ namespace QuadTree
 
     public class QuadTree
     {
-        static public int K = 3;
-
+        public int K { get; set; }
         public QuadNode Root { get; set; }
 
-        public QuadTree(Rectangle area) => Root = new(area);
-
+        public QuadTree(int K, Rectangle area)
+        {
+            this.K = K;
+            Root = new(K, area);
+        }
         public void AddCircle(Circle circle) => Root.AddCircle(circle);
 
         public (QuadNode, Circle)? FindCircle(int x, int y) => FindCircle(Root, x, y);
